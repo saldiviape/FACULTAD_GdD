@@ -1,0 +1,19 @@
+SELECT stock_num, manu_code, COUNT(item_num)cantOrd, 
+       SUM(quantity) cantComprada, SUM(total_price) totalComprado 
+FROM items
+WHERE manu_code='ANZ'
+GROUP BY manu_code,stock_num
+ORDER BY cantOrd DESC
+
+SELECT manu_code, COUNT(item_num)cantOrd, 
+       SUM(quantity) cantComprada, SUM(total_price) totalComprado 
+FROM items
+GROUP BY manu_code
+ORDER BY totalComprado DESC
+
+SELECT stock_num, SUM(quantity) cantComprada, SUM(total_price) totalComprado 
+FROM items
+WHERE stock_num IN (8,4,5,202)
+GROUP BY stock_num
+HAVING SUM(total_price) > 1000
+ORDER BY totalComprado DESC

@@ -1,0 +1,229 @@
+-- Ejemplos básicos
+SELECT * FROM customer
+
+SELECT company, fname, lname FROM customer
+
+-- Contatenación de atributos
+SELECT company, lname+', '+fname FROM customer
+
+-- formulas entre campos
+SELECT stock_num, manu_code, total_price, 
+       quantity, total_price/quantity precioUnitario 
+FROM items
+
+-- Limitar la cant de filas a devolver de la consulta
+SELECT TOP 3 stock_num, manu_code, total_price, quantity, total_price/quantity precioUnitario 
+FROM items
+
+-- Uso del DISTINCT para obtener valores únicos
+SELECT manu_code FROM items
+
+SELECT DISTINCT manu_code FROM items
+
+-- otro ejemplo del DISTINCT
+SELECT stock_num FROM items
+SELECT DISTINCT stock_num FROM items
+
+-- Comenzamos con el WHERE
+SELECT fname, lname FROM customer
+WHERE state='CA'
+
+-- BETWEEN vs operador mayor/menor
+SELECT fname, lname FROM customer
+WHERE state='CA'
+AND zipcode >= 94000 AND zipcode <=94050
+
+SELECT fname, lname FROM customer
+WHERE state='CA'
+AND zipcode BETWEEN 94000 AND 94050
+
+-- NOT IN
+SELECT fname, lname FROM customer
+WHERE state='CA'
+AND zipcode BETWEEN 94000 AND 94050
+AND zipcode NOT IN (94022,94026)
+
+-- LIKE que comiencen con G
+SELECT fname, lname FROM customer
+WHERE state='CA'
+AND zipcode BETWEEN 94000 AND 94050
+AND zipcode NOT IN (94022,94026)
+AND lname LIKE 'G%'
+
+-- LIKE que comiencen con B ó G
+SELECT fname, lname FROM customer
+WHERE state='CA'
+AND zipcode BETWEEN 94000 AND 94050
+AND zipcode NOT IN (94022,94026)
+AND lname LIKE '[BG]%'
+
+-- LIKE 2do caracter del nombre que sea entre la a y f ó entre la A y F
+SELECT fname, lname FROM customer
+WHERE  lname LIKE '_[a-fA-F]%'
+-- insert para probar lo anterior con mayúsculas
+insert into customer (customer_num,lname,state)
+VALUES (12345,'xAxxxxx','CA')
+
+SELECT ZIPCODE FROM customer
+
+-- LIKE que comience con G y tenga 5 letras
+SELECT fname, lname,zipcode FROM customer
+WHERE state='CA'
+AND lname LIKE 'G____'  --G y 4_
+
+-- Operador IN vs. OR
+SELECT fname, lname,zipcode FROM customer
+WHERE state='CA'
+AND zipcode IN (94022,94026)
+
+SELECT fname, lname,zipcode FROM customer
+WHERE state='CA'
+AND zipcode =94022 OR zipcode=94026
+
+
+-- Clausula ORDER BY
+
+SELECT fname, lname,zipcode FROM customer
+WHERE state='CA'
+AND zipcode BETWEEN 94000 AND 94050
+ORDER BY zipcode,fname
+
+SELECT fname, lname,zipcode FROM customer
+WHERE state='CA'
+AND zipcode BETWEEN 94000 AND 94050
+ORDER BY zipcode,fname DESC 
+
+SELECT fname, lname,zipcode FROM customer
+WHERE state='CA'
+AND zipcode BETWEEN 94000 AND 94050
+ORDER BY zipcode DESC,fname DESC 
+
+SELECT fname, lname,zipcode FROM customer
+WHERE state='CA'
+AND zipcode BETWEEN 94000 AND 94050
+ORDER BY 3 DESC,1 DESC
+
+-- Funciones Agregadas
+   COUNT
+   COUNT(DISTINCT)
+   SUM
+   MAX
+   MIN
+   AVG
+
+-- Cuantos filas tiene la tabla clientes (Cuenta todas las filas)
+SELECT count(*) FROM customer
+
+-- Cuantos clientes tenemos en la empresa (No toma en cuenta nulos)
+SELECT COUNT(fname) FROM customer
+
+-- Cuenta Valores únicos de clientes 
+SELECT COUNT(DISTINCT customer_num) FROM orders
+
+--Cuenta todas las ordenes que tengan customer_num no nulo
+SELECT COUNT(customer_num) FROM orders
+
+-- Suma del Total comprado
+SELECT SUM(total_price) FROM items
+
+-- Dos formas de hacer el promedio comprado por item
+SELECT SUM(total_price)/COUNT(order_num) FROM items
+SELECT AVG(total_price) FROM items
+
+-- primer fecha de compra
+SELECT MIN(order_date) FROM orders
+
+-- ultima fecha de compra
+SELECT MAX(order_date) FROM orders
+
+-- Todo junto en un solo SELECT con alias ó etiqueta de atributo
+SELECT COUNT(DISTINCT customer_num) cantClientes, 
+       COUNT(order_num) cantOrdenes,
+       MIN(order_date) primerCompra, 
+	   MAX(order_date) ultimaCompra
+FROM orders
+
+-- GROUP BY
+-- Cantidad de Ordenes de Compra por Cliente
+-- :(  ERROR x no agrupar
+SELECT customer_num cliente, 
+COUNT(order_num) cantOrdenes
+FROM orders
+
+-- Cantidad de Ordenes de Compra por Cliente
+-- :)
+SELECT customer_num cliente, 
+COUNT(order_num) cantOrdenes
+FROM orders
+GROUP BY customer_num
+
+-- GROUP BY con varias funciones agregadas para le mismo Cliente
+SELECT customer_num cliente, 
+COUNT(order_num) cantOrdenes,
+MIN(order_num) primerOrden,
+MAX(order_num) ultimaOrden
+FROM orders
+GROUP BY customer_num
+
+-- GROUP BY con ORDER BY por atributo vs. por posición
+SELECT customer_num cliente, 
+COUNT(order_num) cantOrdenes,
+MIN(order_num) primerOrden,
+MAX(order_num) ultimaOrden
+FROM orders
+GROUP BY customer_num
+ORDER BY 2 DESC
+
+SELECT customer_num cliente, 
+COUNT(order_num) cantOrdenes,
+MIN(order_num) primerOrden,
+MAX(order_num) ultimaOrden
+FROM orders
+GROUP BY customer_num
+ORDER BY cantOrdenes DESC
+ 
+-- WHERE ANTES DE AGRUPAR
+SELECT customer_num cliente, 
+COUNT(order_num) cantOrdenes,
+MIN(order_num) primerOrden,
+MAX(order_num) ultimaOrden
+FROM orders
+WHERE order_num > 1010
+GROUP BY customer_num
+ORDER BY 2 DESC
+
+
+-- MOSTRAME LOS CLIENTES QUE TENGAN MAS DE 1 ORDEN
+-- USO DEL HAVING
+SELECT customer_num cliente, 
+COUNT(order_num) cantOrdenes,
+MIN(order_num) primerOrden,
+MAX(order_num) ultimaOrden
+FROM orders
+GROUP BY customer_num
+HAVING COUNT(order_num) > 1
+ORDER BY 2 DESC
+
+
+-- SON LOS DOS IGUALES (mas performante es usarlo en el WHERE)
+-- FILTRO los clientes cuyo customer_num sea mayor que 110
+SELECT customer_num cliente, 
+COUNT(order_num) cantOrdenes,
+MIN(order_num) primerOrden,
+MAX(order_num) ultimaOrden
+FROM orders
+GROUP BY customer_num
+HAVING customer_num > 110
+ORDER BY 2 DESC
+
+
+SELECT customer_num cliente, 
+COUNT(order_num) cantOrdenes,
+MIN(order_num) primerOrden,
+MAX(order_num) ultimaOrden
+FROM orders
+WHERE customer_num > 110
+GROUP BY customer_num
+ORDER BY 2 DESC
+
+

@@ -1,0 +1,151 @@
+Ejemplo de Self Reference Join (preguntado por un alumno)
+select a.lname,a.fname,b.lname,b.fname
+FROM customer a LEFT JOIN customer b
+ON (a.customer_num_referedBy=b.customer_num)
+
+
+Ejemplo de filtrado de fechas desde un string (preguntado por un alumno)
+SELECT * FROM orders WHERE order_date > '2015-06-01'
+
+
+Ej. Stored Procedure
+DROP TABLE items_aux
+CREATE TABLE items_aux (order_num INT)
+
+CREATE PROCEDURE guardar_items_tabla
+@stock_num INTEGER
+AS
+BEGIN
+  DECLARE items_en_almacen CURSOR FOR
+  SELECT order_num FROM items
+  where stock_num = @stock_num;
+
+  DECLARE @item_del_cursor INTEGER;
+
+  OPEN items_en_almacen;
+
+  FETCH items_en_almacen INTO @item_del_cursor;
+
+  WHILE (@@FETCH_STATUS = 0)
+  BEGIN	
+    INSERT INTO ITEMS_AUX VALUES (@item_del_cursor);
+    FETCH items_en_almacen INTO @item_del_cursor;
+  END 
+CLOSE items_en_almacen;
+DEALLOCATE items_en_almacen;
+
+END
+---------------
+Sin cursor
+
+exec guardar_items_tabla 1
+
+SELECT * from items_aux
+DELETE FROM items_aux
+CREATE TABLE items_aux (order_num INT)
+
+DROP PROCEDURE guardar_items_tabla
+CREATE PROCEDURE guardar_items_tabla
+@stock_num INTEGER
+AS
+BEGIN
+  INSERT INTO ITEMS_AUX 
+  SELECT DISTINCT order_num FROM items
+  where stock_num = @stock_num;
+END
+
+Ejemplos a consulta de Tablas de Catálogo asociadas a Procedures
+TABLAS DE CATÁLOGO
+
+SELECT * FROM SYS.OBJECTS where name LIKE 'calc%'='F'
+SELECT * FROM SYS.PROCEDURES
+SELECT * FROM SYS.ALL_SQL_MODULES WHERE object_id=82099333
+SELECT * FROM SYS.PARAMETERS
+SELECT * FROM SYS.functions
+
+EXECUTE guardar_items_tabla 2
+
+SELECT * FROM ITEMS_AUX
+
+
+ej FUNCION
+
+
+CREATE FUNCTION calculoPrecioTotal (@var1 INTEGER, @var2 dec(12,2))
+RETURNS INT
+AS
+BEGIN
+DECLARE @var3 integer;
+SET @var3 = @var2 * @var1;
+RETURN @var3;
+END
+
+EJEMPLO DE SELECT CON FUNCIÓN EN lista de columnas
+select quantity, total_price, dbo.calculoPrecioTotal(quantity,total_price) precioTotal 
+from items
+
+EJEMPLO DE ejecución de función con valores constantes
+SELECT  dbo.calculoPrecioTotal(20, 2000)
+
+
+EJEMPLO Primer ejercicio Práctica Funciones
+
+CREATE FUNCTION Fx_DIA_SEMANA 
+(@FECHA  DATETIME,
+@IDIOMA VARCHAR (20))
+RETURNS VARCHAR (20)
+AS BEGIN
+DECLARE @DIA INT
+DECLARE @RETORNO VARCHAR(20)
+
+SET @DIA = datepart(weekday,@fecha)
+
+IF @IDIOMA = 'espaniol' 
+BEGIN
+    SET @RETORNO = case when @dia = 1 then 'Domingo'
+		    when @dia = 2 then 'lunes'
+		    when @dia = 3 then 'Martes'
+		    when @dia = 4 then 'Miercoles'
+		    when @dia = 5 then 'Jueves'
+		    when @dia = 6 then 'Viernes'
+		    else 'Sábado' 
+     end
+END
+ELSE
+BEGIN
+	SET @RETORNO = case when @dia = 1 then 'Sunday'
+		    when @dia = 2 then 'Monday'
+		    when @dia = 3 then 'Tuesday'
+		    when @dia = 4 then 'Wednesday'
+		    when @dia = 5 then 'Thursday'
+		    when @dia = 6 then 'Friday'
+		    else 'Saturday' end
+END
+
+RETURN @RETORNO
+END
+
+EJEMPLO DE CASE -- AHORA ANDA!!!!!!!!!!!!!!!!!!!!!
+
+SELECT order_num, order_date,
+CASE 
+  WHEN state =  'CA' THEN dbo.fx_dia_semana(order_date,'ingles')
+  WHEN state !=  'CA' THEN dbo.fx_dia_semana(order_date,'espaniol')
+ END as dia_semana 
+FROM orders o join customer c
+on o.customer_num = c.customer_num
+where paid_date IS NULL
+
+SELECT order_num, order_date,c.state, dbo.fx_dia_semana(order_date,'espaniol')
+FROM orders o, customer c
+WHERE o.customer_num = c.customer_num
+AND paid_date IS NULL
+AND state != 'CA'
+UNION ALL
+SELECT order_num, order_date,c.state, dbo.fx_dia_semana(order_date,'ingles')
+FROM orders o, customer c
+WHERE o.customer_num = c.customer_num
+AND paid_date IS NULL
+AND state = 'CA'
+
+SELECT dbo.fx_dia_semana('2017-05-21','espaniol')

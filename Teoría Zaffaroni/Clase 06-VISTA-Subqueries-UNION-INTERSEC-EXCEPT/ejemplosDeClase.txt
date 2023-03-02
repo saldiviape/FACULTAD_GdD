@@ -1,0 +1,233 @@
+CREATE VIEW clientesFlorida
+AS
+SELECT * FROM customer WHERE state='FL'
+
+SELECT LNAME,FNAME FROM CLIENTESFLORIDA
+
+INSERT into CLIENTESFLORIDA 
+(customer_num,lname,fname,state)
+VALUES (9393,'ZAF','John','CA')
+
+SELECT * FROM CUSTOMER WHERE CUSTOMER_NUM=9393
+
+CREATE VIEW clientesFloridaCK
+AS
+SELECT * FROM customer WHERE state='FL'
+WITH CHECK OPTION
+
+--ERROR
+
+INSERT into CLIENTESFLORIDACK 
+(customer_num,lname,fname,state)
+VALUES (9394,'ZAF','John','CA')
+
+
+-- :)
+INSERT into CLIENTESFLORIDACK 
+(customer_num,lname,fname,state)
+VALUES (9394,'ZAF','John','FL')
+
+SELECT LNAME,FNAME FROM CLIENTESFLORIDA
+
+--ANDA :)
+UPDATE CLIENTESFLORIDA SET STATE='CA'
+WHERE CUSTOMER_NUM=9394
+
+SELECT LNAME,FNAME FROM CLIENTESFLORIDA
+
+--NO HACE EL UPDATE
+UPDATE CLIENTESFLORIDACK SET STATE='CA'
+WHERE CUSTOMER_NUM=9393
+
+SELECT LNAME,FNAME FROM CLIENTESFLORIDACK
+
+
+SELECT stock_num,manu_code 
+FROM stock WHERE unit_price < 25
+UNION
+SELECT stock_num,manu_code 
+FROM items WHERE stock_num=5
+ORDER BY 1,2
+
+SELECT 1 orden,customer_num,order_num, order_date
+FROM orders
+WHERE customer_num=127
+UNION
+SELECT 2 orden,customer_num,order_num, order_date
+FROM orders
+WHERE customer_num!=127
+ORDER BY 1 ASC,2 DESC
+
+SELECT stock_num,manu_code 
+FROM products WHERE unit_price < 25
+INTERSECT
+SELECT stock_num STKNUM,manu_code CODIGOFACT 
+FROM items WHERE stock_num=5
+ORDER BY stock_num
+
+SELECT stock_num,manu_code 
+FROM stock WHERE unit_price < 25
+EXCEPT
+SELECT stock_num,manu_code 
+FROM items WHERE stock_num=5
+---------------------------------------------------------
+SELECT LNAME,FNAME
+FROM customer
+WHERE city =(SELECT city
+FROM customer
+WHERE lname ='Higgins')
+
+SELECT c1.lname,c1.fname
+FROM customer c1 JOIN customer c2
+ON (c1.city=c2.city)
+WHERE c2.lname ='Higgins'
+
+SELECT c1.lname,c1.fname
+FROM customer c1 JOIN customer c2
+ON (c1.city=c2.city AND c2.lname ='Higgins')
+-- Ojo con usar cláusulas del WHERE en el ON en un OUTER JOIN,
+-- pueden dar valores diferentes.
+
+
+SELECT LNAME,FNAME
+FROM customer
+WHERE city IN (SELECT DISTINCT city
+FROM customer
+WHERE state='CA')
+
+SELECT stock_num,manu_code,quantity*total_price
+FROM items
+WHERE (quantity*total_price) > 
+(SELECT sum(quantity*total_price)/count(distinct order_num) 
+   FROM items)
+
+-- SUBQUERY CON ERROR POR TRAER MAS DE UNO
+SELECT c.customer_num,SUM(total_price)
+FROM customer c, orders o, items i
+WHERE c.customer_num = o.customer_num
+AND o.order_num = i.order_num
+GROUP BY c.customer_num
+HAVING SUM(total_price) > (
+SELECT CUSTOMER_NUM,SUM(total_price)/COUNT(DISTINCT customer_num)PROMEDIO
+FROM orders o, items i
+WHERE o.order_num = i.order_num
+GROUP BY CUSTOMER_NUM)
+ORDER BY 2 DESC
+
+-- SUBQUERY :)
+SELECT c.customer_num,SUM(total_price)
+FROM customer c, orders o, items i
+WHERE c.customer_num = o.customer_num
+AND o.order_num = i.order_num
+GROUP BY c.customer_num
+HAVING SUM(total_price) > (
+SELECT SUM(total_price)/COUNT(DISTINCT customer_num)PROMEDIO
+FROM orders o, items i
+WHERE o.order_num = i.order_num
+)
+ORDER BY 2 DESC
+
+
+Cuantos clientes viven en la misma ciudad que el cliente Higgins
+ 
+SELECT COUNT(*)
+FROM customer
+WHERE city =
+(SELECT city
+FROM customer
+WHERE lname = 'Higgins')
+
+Cuantos clientes viven en la misma ciudad que el cliente Higgins
+
+SELECT count(*) FROM customer c, customer c2
+where c.city = c2.city
+AND c2.lname ='Higgins'
+
+
+SELECT * FROM items
+WHERE manu_code IN
+(SELECT manu_code FROM manufact
+WHERE lead_time > '1');
+
+
+-- SUBQUERY CORRELACIONADO
+select customer_num, lname, fname
+from customer cORI
+where NOT EXISTS (SELECT order_num FROM orders oSQ 
+where oSQ.customer_num = cORI.customer_num)
+
+-- LO MISMO CON GROUP BY
+select c.customer_num, lname, fname
+from customer c LEFT JOIN orders o
+ON c.customer_num=o.customer_num
+GROUP BY c.customer_num, lname, fname
+HAVING COUNT(order_num)=0
+ORDER BY 1
+
+-- 
+select customer_num, lname, fname
+from customer 
+WHERE customer_num NOT IN 
+                  (SELECT DISTINCT customer_num FROM orders)
+
+--
+listar las ordenes de los clientes con su total comprado pero solo los que el 
+total de la orden sea mayor que el promedio de dicho cliente.
+
+SELECT o.order_num,o.customer_num, SUM(quantity*total_price) 
+FROM orders o JOIN items i ON o.order_num=i.order_num
+JOIN (SELECT customer_num, SUM(quantity*total_price)/COUNT(DISTINCT order_num)
+      FROM orders o JOIN items i ON (o.order_num=i.order_num)
+      GROUP BY customer_num) tabSQ
+      ON (o.customer_num=tabSQ.customer_num)
+GROUP BY o.order_num,o.customer_num
+
+-- subquery en el from
+SELECT o.order_num,o.customer_num, SUM(quantity*total_price) 
+FROM orders o 
+JOIN items i ON o.order_num=i.order_num
+JOIN (SELECT customer_num, 
+      SUM(quantity*total_price)/COUNT(DISTINCT o2.order_num)
+      FROM orders o2 JOIN items i2 
+      ON (o2.order_num=i2.order_num)
+      GROUP BY customer_num) tabSQ
+ON (o.customer_num=tabSQ.customer_num)
+GROUP BY o.order_num,o.customer_num
+
+
+-- crea una temporal con datos
+SELECT * INTO #stock2 FROM stock
+delete from #stock2
+
+-- error por distintos formatos
+INSERT INTO #stock2
+SELECT * FROM customer
+
+-- inserta en cualquier tabla el resultado del select
+INSERT INTO #stock2
+SELECT * FROM products
+
+
+-- suquery en un UPDATE / DELETE
+BEGIN TRANSACTION
+DELETE FROM CUSTOMER WHERE customer_num not in
+(SELECT customer_num FROM orders)
+
+SELECT COUNT(*) FROM CUSTOMER
+
+ROLLBACK TRANSACTION
+
+SELECT COUNT(*) FROM CUSTOMER
+
+-- SUBQUERY EN UPDATE
+begin transaction
+select count(*) from manufact where lead_time=0
+
+update manufact SET lead_time=0 
+WHERE manu_code IN (select manu_code FROM items)
+
+select count(*) from manufact where lead_time=0
+
+rollback transaction
+
+select count(*) from manufact where lead_time=0

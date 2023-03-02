@@ -1,0 +1,8 @@
+D:\Facultad\3. Gestión de Datos\TP\FrbaHotel\libreria\bin\Debug\libreria.dll
+D:\Facultad\3. Gestión de Datos\TP\FrbaHotel\libreria\bin\Debug\libreria.pdb
+D:\Facultad\3. Gestión de Datos\TP\FrbaHotel\libreria\obj\Debug\libreria.csprojResolveAssemblyReference.cache
+D:\Facultad\3. Gestión de Datos\TP\FrbaHotel\libreria\obj\Debug\libreria.pdb
+D:\Facultad\3. Gestión de Datos\TP\TP ANTERIOR\FrbaHotel\libreria\bin\Debug\libreria.dll
+D:\Facultad\3. Gestión de Datos\TP\TP ANTERIOR\FrbaHotel\libreria\bin\Debug\libreria.pdb
+D:\Facultad\3. Gestión de Datos\TP\TP ANTERIOR\FrbaHotel\libreria\obj\Debug\libreria.csprojResolveAssemblyReference.cache
+D:\Facultad\3. Gestión de Datos\TP\TP ANTERIOR\FrbaHotel\libreria\obj\Debug\libreria.pdb

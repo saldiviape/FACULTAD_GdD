@@ -1,0 +1,58 @@
+TABLAS DE CATALOGO
+
+Triggers
+
+select * from sys.triggers
+
+select * from sys.all_sql_modules
+
+select definition from sys.all_sql_modules a,sys.triggers t
+WHERE a.object_id=t.object_id
+AND name='insFabric'
+
+Ver todos los objetos de la BD
+
+select * from sys.objects where name='suma'
+
+select * from sys.objects where type='V'
+
+Ver objetos de una tabla
+
+select * from sys.objects 
+where parent_object_id=2137058649
+
+
+Parámetros de los procedures
+
+select po.name, pa.name,is_output
+from sys.procedures po, sys.parameters pa
+where po.object_id = pa.object_id
+
+
+
+Definición de los procedures
+
+select po.name, definition 
+from sys.procedures po, sys.all_sql_modules mo
+where po.object_id = mo.object_id
+
+
+
+Buscar Funciones
+
+select * from sys.objects where name='suma2'
+select * from sys.objects where type='FN'
+
+select definition 
+from sys.all_sql_modules mo
+where mo.object_id=2021582240
+
+
+
+
+
+
+
+
+
+

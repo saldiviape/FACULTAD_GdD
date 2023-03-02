@@ -1,0 +1,283 @@
+--drop VIEW clientesVista  Borra una vista existente
+
+CREATE VIEW clientesVista
+(cliente_num, nombre, apellido, cant_ordenes)
+AS
+SELECT c.customer_num,fname,lname,COUNT(o.order_num)  --,SUM(total_price) total
+FROM customer c JOIN orders o ON (c.customer_num=o.customer_num)
+WHERE state='CA'
+--JOIN items i ON (o.order_num=i.item_num)
+GROUP BY c.customer_num,fname,lname
+
+
+CREATE VIEW clientesCambios
+(cliente_num, nombre, apellido)
+AS
+SELECT customer_num,fname,lname
+FROM customer c 
+
+
+insert into clientesCambios values (9999,'Ramiro','Pez')
+update clientesCambios SET nombre='Gonzalo' WHERE cliente_num=9999
+delete from clientesCambios WHERE cliente_num=9999
+select * from customer where customer_num=9999
+
+
+SELECT cliente_num, COUNT(order_num)
+FROM clientesVista JOIN orders ON (cliente_num=customer_num)
+GROUP BY cliente_num
+
+
+
+SELECT stock_num,manu_code FROM stock WHERE unit_price < 25
+
+SELECT stock_num,manu_code FROM items WHERE quantity=10
+
+
+
+
+
+
+
+SELECT stock_num,manu_code FROM stock WHERE unit_price < 25
+UNION
+SELECT stock_num,manu_code FROM items WHERE stock_num=5
+ORDER BY 1,2
+
+SELECT stock_num CAMPO1 ,manu_code CAMPO2 FROM stock WHERE unit_price < 25
+UNION ALL
+SELECT stock_num,manu_code FROM items WHERE stock_num=5
+
+
+SELECT stock_num,manu_code FROM stock WHERE unit_price < 25
+INTERSECT
+SELECT stock_num,manu_code FROM items WHERE stock_num=5
+
+SELECT stock_num,manu_code FROM stock WHERE unit_price < 25
+EXCEPT
+SELECT stock_num,manu_code FROM items WHERE stock_num=5
+
+SELECT stock_num,manu_code FROM items WHERE stock_num=5
+EXCEPT
+SELECT stock_num,manu_code FROM stock WHERE unit_price < 25
+
+SELECT phone,'('+substring(PHONE,1,3)+') '+substring(PHONE,5,10) from customer
+
+
+
+BEGIN TRANSACTION
+INSERT INTO manufact VALUES ('OOO','Ortolani, Jorge',0) 
+INSERT INTO stock  (stock_num, manu_code,description) VALUES (111,'OOO','Raquetas')
+
+select * from manufact m ,stock s 
+WHERE m.manu_code='OOO' 
+AND m.manu_code=s.manu_code
+
+
+ROLLBACK
+
+select * from manufact m ,stock s WHERE m.manu_code='OOO' AND m.manu_code=s.manu_code
+
+
+COMMIT
+
+select * from manufact m ,stock s WHERE m.manu_code='OOO' AND m.manu_code=s.manu_code
+
+delete from stock where manu_code='OOO'
+delete from manufact where manu_code='OOO'
+
+--SUBQUERIES
+
+EN EL INSERT
+
+INSERT INTO CUSTOMER
+   (customer_num, fname,lname,company,address1,address2,state,city)
+   SELECT customer_num, fname,lname,company,address1,address2,state,city
+   FROM customer
+
+-- EN EL DELETE
+   SELECT * INTO #CUSTOMERNEW FROM CUSTOMER
+   DELETE FROM #CUSTOMERNEW
+          WHERE customer_num IN (SELECT DISTINCT customer_num FROM orders
+                                  WHERE MONTH(order_date)=5 )
+
+SELECT * from #CUSTOMERNEW
+--borrar los clientes que no tienen ordenes
+   DELETE FROM #CUSTOMERNEW
+          WHERE customer_num NOT IN (SELECT DISTINCT customer_num FROM orders)
+
+
+SELECT * from #CUSTOMERNEW
+
+
+--UPDATE
+
+--EN EL SET (OBLIGATORIO Q DEVUELVA UN SOLO VALOR EL SUBQUERY)
+
+UPDATE #CUSTOMERNEW SET state = (SELECT state FROM customer WHERE customer_num=119)
+WHERE CUSTOMER_NUM=115
+
+--EN EL WHERE
+
+UPDATE #CUSTOMERNEW SET state = 'CA'
+WHERE customer_num IN (SELECT DISTINCT customer_num FROM orders
+                                  WHERE backlog='n')
+
+SELECT CUSTOMER_NUM,STATE from #CUSTOMERNEW
+
+select * from orders
+
+
+
+--EN EL SELECT
+
+SELECT c.customer_num, COUNT(order_num)Cant_Ord_Cli
+       ,(SELECT COUNT(*) FROM orders)Cant_Ord_Tot
+FROM customer c, orders o
+WHERE c.customer_num = o.customer_num
+GROUP BY c.customer_num
+
+-- en el FROM
+
+SELECT c.customer_num, SUM(total_price) total_ordenado
+FROM customer c JOIN (SELECT o.order_num,o.customer_num,total_price
+                      FROM orders o JOIN items i ON (o.order_num=i.order_num)) o2
+ON (c.customer_num = o2.customer_num)
+GROUP BY c.customer_num
+
+SELECT c.customer_num, SUM(total_price) total_ordenado
+FROM customer c JOIN orders o ON (c.customer_num = o.customer_num)
+                JOIN items i ON (o.order_num=i.order_num)
+GROUP BY c.customer_num
+
+
+-- EN EL WHERE
+
+
+SELECT customer_num,fname,lname FROM customer
+WHERE customer_num IN (SELECT DISTINCT customer_num FROM orders
+                                  WHERE backlog='n')
+
+-- SUQUERY CORRELACIONADO
+SELECT customer_num,fname,lname, sname FROM customer c 
+                                       JOIN state s ON (c.state=s.code) 
+WHERE (SELECT COUNT(order_num) FROM orders o
+              WHERE o.customer_num = c.customer_num)>=2
+
+SELECT c.customer_num,fname,lname, sname 
+FROM customer c JOIN state s ON (c.state=s.code)
+                JOIN orders o ON (o.customer_num = c.customer_num) 
+GROUP BY c.customer_num,fname,lname, sname
+HAVING COUNT(order_num)>=2
+
+
+-- en el HAVING
+
+SELECT c.customer_num,fname,lname, sname 
+FROM customer c JOIN state s ON (c.state=s.code)
+                JOIN orders o ON (o.customer_num = c.customer_num) 
+                JOIN items  i ON (o.order_num = i.order_num)
+GROUP BY c.customer_num,fname,lname, sname
+HAVING SUM(total_price) < (SELECT SUM(total_price)/COUNT(DISTINCT order_num)
+                            FROM items)drop VIEW clientesVista
+
+CREATE VIEW clientesVista
+(cliente_num, nombre, apellido)
+AS
+SELECT customer_num,fname,lname
+FROM customer c 
+
+
+CREATE VIEW clientesCambios
+(cliente_num, nombre, apellido)
+AS
+SELECT customer_num,fname,lname
+FROM customer c 
+
+
+insert into clientesCambios values (9999,'Ramiro','Pez')
+update clientesCambios SET nombre='Gonzalo' WHERE cliente_num=9999
+delete from clientesCambios WHERE cliente_num=9999
+select * from customer where customer_num=9999
+
+
+SELECT cliente_num, COUNT(order_num)
+FROM clientesVista JOIN orders ON (cliente_num=customer_num)
+GROUP BY cliente_num
+
+
+
+SELECT stock_num,manu_code FROM stock WHERE unit_price < 25
+
+SELECT stock_num,manu_code FROM items WHERE quantity=10
+
+
+
+
+
+
+
+SELECT stock_num,manu_code FROM stock WHERE unit_price < 25
+UNION
+SELECT stock_num,manu_code FROM items WHERE stock_num=5
+ORDER BY 1,2
+
+SELECT stock_num CAMPO1 ,manu_code CAMPO2 FROM stock WHERE unit_price < 25
+UNION ALL
+SELECT stock_num,manu_code FROM items WHERE stock_num=5
+
+
+SELECT stock_num,manu_code FROM stock WHERE unit_price < 25
+INTERSECT
+SELECT stock_num,manu_code FROM items WHERE stock_num=5
+
+SELECT stock_num,manu_code FROM stock WHERE unit_price < 25
+EXCEPT
+SELECT stock_num,manu_code FROM items WHERE stock_num=5
+
+SELECT stock_num,manu_code FROM items WHERE stock_num=5
+EXCEPT
+SELECT stock_num,manu_code FROM stock WHERE unit_price < 25
+
+SELECT phone,'('+substring(PHONE,1,3)+') '+substring(PHONE,5,10) from customer
+
+
+
+BEGIN TRANSACTION
+INSERT INTO manufact VALUES ('OOO','Ortolani, Jorge',0) 
+INSERT INTO stock  (stock_num, manu_code,description) VALUES (111,'OOO','Raquetas')
+
+select * from manufact m ,stock s 
+WHERE m.manu_code='OOO' 
+AND m.manu_code=s.manu_code
+
+
+ROLLBACK
+
+select * from manufact m ,stock s WHERE m.manu_code='OOO' AND m.manu_code=s.manu_code
+
+
+COMMIT
+
+select * from manufact m ,stock s WHERE m.manu_code='OOO' AND m.manu_code=s.manu_code
+
+delete from stock where manu_code='OOO'
+delete from manufact where manu_code='OOO'
+
+--SUBQUERIES
+
+--EN EL SELECT
+
+SELECT c.customer_num, COUNT(order_num)Cant_Ordenes_Cliente
+       ,(SELECT COUNT(*) FROM orders)Cant_Ordenes_Totales
+FROM customer c, orders o
+WHERE c.customer_num = o.customer_num
+GROUP BY c.customer_num
+
+-- en el FROM
+
+SELECT c.customer_num, SUM(total_price) total_ordenado
+FROM customer c JOIN (SELECT o.order_num,o.customer_num,total_price
+                      FROM orders o, items i) o2
+ON (c.customer_num = o2.customer_num)
+GROUP BY c.customer_num

@@ -1,0 +1,86 @@
+CREATE TABLE deportes (
+codDeporte SMALLINT PRIMARY KEY IDENTITY(1,1),
+descripcion VARCHAR(50) NOT NULL,
+capGeneral VARCHAR(50))
+
+CREATE TABLE provincias (
+codProvincia SMALLINT PRIMARY KEY,
+descripcion VARCHAR(50) NOT NULL)
+
+CREATE TABLE socios (
+nroSocio INT PRIMARY KEY,
+apellidoYNombre VARCHAR(100) NOT NULL,
+direccion VARCHAR(100),
+documento INT NOT NULL,
+codProvincia SMALLINT REFERENCES provincias,
+tipoSocio CHAR CHECK(tipoSocio IN ('A','P')) DEFAULT 'A')
+
+CREATE TABLE cuotas (
+cuotaId BIGINT PRIMARY KEY IDENTITY(1,1),
+nroSocio INT REFERENCES socios NOT NULL,
+fechaCuota DATE NOT NULL,
+importeAPagar NUMERIC(12,2) NOT NULL CHECK(importeAPagar >=0),
+fechaPago DATE,
+importePagado NUMERIC(12,2) CHECK(importePagado >=0)
+)
+
+CREATE TABLE deportesPracticados(
+nroSocio INT REFERENCES socios,
+codDeporte SMALLINT REFERENCES deportes,
+fechaInicioDeporte DATE,
+PRIMARY KEY (nroSocio,codDeporte))
+
+
+ALTER TABLE socios MODIFY ( tipoSocio CHAR CHECK(tipoSocio IN ('A','P')) DEFAULT 'A' NOT NULL)
+
+INSERT INTO deportes (descripcion, capGeneral) 
+VALUES ('RUGBY','HPH')
+INSERT INTO deportes (descripcion) 
+VALUES ('HOCKEY S/CESPED')
+INSERT INTO deportes (descripcion, capGeneral) 
+VALUES ('HOCKE S/PATINES',NULL)
+
+INSERT INTO provincias VALUES (1,'CABA')
+--felices
+INSERT INTO socios VALUES (1,'CHAVEZ JULIO','nnnn 999',9999999,1,'A')
+INSERT INTO socios 
+(nroSocio,apellidoYNombre,direccion,codProvincia,documento)
+VALUES (2,'CHAVEZ JULIA','nnnn 999',1,8999999)
+INSERT INTO socios VALUES (3,'CHAVEZ JULIO','nnnn 999',9999999,1,NULL)
+
+
+--no felices
+INSERT INTO socios VALUES (1,'CHAVEZ JULIO','nnnn 999',9999999,1,'A')
+INSERT INTO socios VALUES (2,'CHAVEZ JULIO','nnnn 999',9999999,1,'X')
+INSERT INTO socios VALUES (2,'CHAVEZ JULIO','nnnn 999',9999999,11,'A')
+
+
+------
+INSERT INTO deportesPracticados VALUES (1,1,NULL)
+INSERT INTO deportesPracticados VALUES (1,2,NULL)
+INSERT INTO deportesPracticados VALUES (2,3,NULL)
+------
+INSERT INTO cuotas
+(nroSocio ,fechaCuota,importeAPagar,fechaPago,importePagado)
+VALUES (1,'2017-07-01',900,'2017-07-10',900)
+INSERT INTO cuotas
+(nroSocio ,fechaCuota,importeAPagar,fechaPago,importePagado)
+VALUES (1,'2017-08-01',900,'2017-08-08',900)
+INSERT INTO cuotas
+(nroSocio ,fechaCuota,importeAPagar,fechaPago,importePagado)
+VALUES (2,'2017-08-01',900,'2017-08-08',900)
+
+INSERT INTO cuotas
+(nroSocio ,fechaCuota,importeAPagar,fechaPago,importePagado)
+VALUES (11,'2017-08-01',900,'2017-08-08',900)
+INSERT INTO cuotas
+(nroSocio ,fechaCuota,importeAPagar,fechaPago,importePagado)
+VALUES (1,'2017-08-01',-900,'2017-08-08',900)
+
+
+SELECT * FROM cuotas WHERE MONTH(fechaCuota)=8 > '2017-07-15'
+
+SELECT * FROM deportes
+SELECT * FROM provincias
+SELECT * FROM socios
+SELECT * FROM deportesPracticados

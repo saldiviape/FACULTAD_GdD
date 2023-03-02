@@ -1,0 +1,92 @@
+D:\Facultad\3. Gestión de Datos\TP\FrbaHotel\bin\Debug\FrbaHotel.exe.config
+D:\Facultad\3. Gestión de Datos\TP\FrbaHotel\bin\Debug\FrbaHotel.exe
+D:\Facultad\3. Gestión de Datos\TP\FrbaHotel\bin\Debug\FrbaHotel.pdb
+D:\Facultad\3. Gestión de Datos\TP\FrbaHotel\bin\Debug\libreria.dll
+D:\Facultad\3. Gestión de Datos\TP\FrbaHotel\bin\Debug\libreria.pdb
+D:\Facultad\3. Gestión de Datos\TP\FrbaHotel\obj\Debug\FrbaHotel.csprojResolveAssemblyReference.cache
+D:\Facultad\3. Gestión de Datos\TP\FrbaHotel\obj\Debug\FrbaHotel.AbmCliente.Cliente_Alta.resources
+D:\Facultad\3. Gestión de Datos\TP\FrbaHotel\obj\Debug\FrbaHotel.AbmHabitacion.Habitacion_Alta.resources
+D:\Facultad\3. Gestión de Datos\TP\FrbaHotel\obj\Debug\FrbaHotel.AbmHotel.Hotel_Alta.resources
+D:\Facultad\3. Gestión de Datos\TP\FrbaHotel\obj\Debug\FrbaHotel.AbmRol.Rol_Alta.resources
+D:\Facultad\3. Gestión de Datos\TP\FrbaHotel\obj\Debug\FrbaHotel.AbmUsuario.Usuario_Alta.resources
+D:\Facultad\3. Gestión de Datos\TP\FrbaHotel\obj\Debug\FrbaHotel.CancelarReserva.frm_ABMCancelarReserva.resources
+D:\Facultad\3. Gestión de Datos\TP\FrbaHotel\obj\Debug\FrbaHotel.GenerarModificacionReserva.ModificarReserva.resources
+D:\Facultad\3. Gestión de Datos\TP\FrbaHotel\obj\Debug\FrbaHotel.frm_Inicio.resources
+D:\Facultad\3. Gestión de Datos\TP\FrbaHotel\obj\Debug\FrbaHotel.GenerarModificacionReserva.frm_ABMGenerarModificacionReserva.resources
+D:\Facultad\3. Gestión de Datos\TP\FrbaHotel\obj\Debug\FrbaHotel.ListadoEstadistico.ListadoEstadistico.resources
+D:\Facultad\3. Gestión de Datos\TP\FrbaHotel\obj\Debug\FrbaHotel.Login.Login.resources
+D:\Facultad\3. Gestión de Datos\TP\FrbaHotel\obj\Debug\FrbaHotel.Properties.Resources.resources
+D:\Facultad\3. Gestión de Datos\TP\FrbaHotel\obj\Debug\FrbaHotel.RegistrarConsumible.RegistrarConsumible.resources
+D:\Facultad\3. Gestión de Datos\TP\FrbaHotel\obj\Debug\FrbaHotel.frm_SeleccionarRolFuncionalidadHotel.resources
+D:\Facultad\3. Gestión de Datos\TP\FrbaHotel\obj\Debug\FrbaHotel.csproj.GenerateResource.Cache
+D:\Facultad\3. Gestión de Datos\TP\FrbaHotel\obj\Debug\FrbaHotel.exe
+D:\Facultad\3. Gestión de Datos\TP\FrbaHotel\obj\Debug\FrbaHotel.pdb
+D:\Facultad\3. Gestión de Datos\TP\FrbaHotel\obj\Debug\FrbaHotel.AbmRol.Rol_Baja.resources
+D:\Facultad\3. Gestión de Datos\TP\FrbaHotel\obj\Debug\FrbaHotel.AbmRol.Rol_Modificacion.resources
+D:\Facultad\3. Gestión de Datos\TP\FrbaHotel\obj\Debug\FrbaHotel.AbmCliente.Cliente_Baja.resources
+D:\Facultad\3. Gestión de Datos\TP\FrbaHotel\obj\Debug\FrbaHotel.AbmCliente.Cliente_Modificacion.resources
+D:\Facultad\3. Gestión de Datos\TP\FrbaHotel\obj\Debug\FrbaHotel.AbmHabitacion.Habitacion_Baja.resources
+D:\Facultad\3. Gestión de Datos\TP\FrbaHotel\obj\Debug\FrbaHotel.AbmHabitacion.Habitacion_Modificacion.resources
+D:\Facultad\3. Gestión de Datos\TP\FrbaHotel\obj\Debug\FrbaHotel.AbmHotel.Hotel_Baja.resources
+D:\Facultad\3. Gestión de Datos\TP\FrbaHotel\obj\Debug\FrbaHotel.AbmHotel.Hotel_Modificacion.resources
+D:\Facultad\3. Gestión de Datos\TP\FrbaHotel\obj\Debug\FrbaHotel.AbmRegimen.Regimen_Alta.resources
+D:\Facultad\3. Gestión de Datos\TP\FrbaHotel\obj\Debug\FrbaHotel.AbmRegimen.Regimen_Baja.resources
+D:\Facultad\3. Gestión de Datos\TP\FrbaHotel\obj\Debug\FrbaHotel.AbmRegimen.Regimen_Modificacion.resources
+D:\Facultad\3. Gestión de Datos\TP\FrbaHotel\obj\Debug\FrbaHotel.AbmUsuario.Usuario_Baja.resources
+D:\Facultad\3. Gestión de Datos\TP\FrbaHotel\obj\Debug\FrbaHotel.AbmUsuario.Usuario_Modificacion.resources
+D:\Facultad\3. Gestión de Datos\TP\FrbaHotel\obj\Debug\FrbaHotel.DarBajaReserva.Reserva_Baja.resources
+D:\Facultad\3. Gestión de Datos\TP\FrbaHotel\obj\Debug\FrbaHotel.FacturarEstadia.FacturarEstadia.resources
+D:\Facultad\3. Gestión de Datos\TP\FrbaHotel\obj\Debug\FrbaHotel.GenerarModificacionReserva.GenerarReserva.resources
+D:\Facultad\3. Gestión de Datos\TP\FrbaHotel\obj\Debug\FrbaHotel.RegistrarEstadia.RegistrarEstadia.resources
+D:\Facultad\3. Gestión de Datos\TP\FrbaHotel\obj\Debug\FrbaHotel.AbmCliente.ListadoDeSeleccion_Cliente.resources
+D:\Facultad\3. Gestión de Datos\TP\FrbaHotel\obj\Debug\FrbaHotel.AbmHabitacion.ListadoDeSeleccion_Habitacion.resources
+D:\Facultad\3. Gestión de Datos\TP\FrbaHotel\obj\Debug\FrbaHotel.AbmHotel.ListadoDeSeleccion_Hotel.resources
+D:\Facultad\3. Gestión de Datos\TP\FrbaHotel\obj\Debug\FrbaHotel.AbmRegimen.ListadoDeSeleccion_Regimen.resources
+D:\Facultad\3. Gestión de Datos\TP\FrbaHotel\obj\Debug\FrbaHotel.AbmRol.ListadoDeSeleccion_Rol.resources
+D:\Facultad\3. Gestión de Datos\TP\FrbaHotel\obj\Debug\FrbaHotel.AbmUsuario.ListadoDeSeleccion_Usuario.resources
+D:\Facultad\3. Gestión de Datos\TP\TP ANTERIOR\FrbaHotel\bin\Debug\FrbaHotel.exe.config
+D:\Facultad\3. Gestión de Datos\TP\TP ANTERIOR\FrbaHotel\obj\Debug\FrbaHotel.exe
+D:\Facultad\3. Gestión de Datos\TP\TP ANTERIOR\FrbaHotel\obj\Debug\FrbaHotel.pdb
+D:\Facultad\3. Gestión de Datos\TP\TP ANTERIOR\FrbaHotel\bin\Debug\FrbaHotel.exe
+D:\Facultad\3. Gestión de Datos\TP\TP ANTERIOR\FrbaHotel\bin\Debug\FrbaHotel.pdb
+D:\Facultad\3. Gestión de Datos\TP\TP ANTERIOR\FrbaHotel\bin\Debug\libreria.dll
+D:\Facultad\3. Gestión de Datos\TP\TP ANTERIOR\FrbaHotel\bin\Debug\libreria.pdb
+D:\Facultad\3. Gestión de Datos\TP\TP ANTERIOR\FrbaHotel\obj\Debug\FrbaHotel.csprojResolveAssemblyReference.cache
+D:\Facultad\3. Gestión de Datos\TP\TP ANTERIOR\FrbaHotel\obj\Debug\FrbaHotel.AbmCliente.Cliente_Alta.resources
+D:\Facultad\3. Gestión de Datos\TP\TP ANTERIOR\FrbaHotel\obj\Debug\FrbaHotel.AbmCliente.Cliente_Baja.resources
+D:\Facultad\3. Gestión de Datos\TP\TP ANTERIOR\FrbaHotel\obj\Debug\FrbaHotel.AbmCliente.Cliente_Modificacion.resources
+D:\Facultad\3. Gestión de Datos\TP\TP ANTERIOR\FrbaHotel\obj\Debug\FrbaHotel.AbmCliente.ListadoDeSeleccion_Cliente.resources
+D:\Facultad\3. Gestión de Datos\TP\TP ANTERIOR\FrbaHotel\obj\Debug\FrbaHotel.AbmHabitacion.Habitacion_Alta.resources
+D:\Facultad\3. Gestión de Datos\TP\TP ANTERIOR\FrbaHotel\obj\Debug\FrbaHotel.AbmHabitacion.Habitacion_Baja.resources
+D:\Facultad\3. Gestión de Datos\TP\TP ANTERIOR\FrbaHotel\obj\Debug\FrbaHotel.AbmHabitacion.Habitacion_Modificacion.resources
+D:\Facultad\3. Gestión de Datos\TP\TP ANTERIOR\FrbaHotel\obj\Debug\FrbaHotel.AbmHabitacion.ListadoDeSeleccion_Habitacion.resources
+D:\Facultad\3. Gestión de Datos\TP\TP ANTERIOR\FrbaHotel\obj\Debug\FrbaHotel.AbmHotel.Hotel_Alta.resources
+D:\Facultad\3. Gestión de Datos\TP\TP ANTERIOR\FrbaHotel\obj\Debug\FrbaHotel.AbmHotel.Hotel_Baja.resources
+D:\Facultad\3. Gestión de Datos\TP\TP ANTERIOR\FrbaHotel\obj\Debug\FrbaHotel.AbmHotel.Hotel_Modificacion.resources
+D:\Facultad\3. Gestión de Datos\TP\TP ANTERIOR\FrbaHotel\obj\Debug\FrbaHotel.AbmHotel.ListadoDeSeleccion_Hotel.resources
+D:\Facultad\3. Gestión de Datos\TP\TP ANTERIOR\FrbaHotel\obj\Debug\FrbaHotel.AbmRegimen.ListadoDeSeleccion_Regimen.resources
+D:\Facultad\3. Gestión de Datos\TP\TP ANTERIOR\FrbaHotel\obj\Debug\FrbaHotel.AbmRegimen.Regimen_Alta.resources
+D:\Facultad\3. Gestión de Datos\TP\TP ANTERIOR\FrbaHotel\obj\Debug\FrbaHotel.AbmRegimen.Regimen_Baja.resources
+D:\Facultad\3. Gestión de Datos\TP\TP ANTERIOR\FrbaHotel\obj\Debug\FrbaHotel.AbmRegimen.Regimen_Modificacion.resources
+D:\Facultad\3. Gestión de Datos\TP\TP ANTERIOR\FrbaHotel\obj\Debug\FrbaHotel.AbmRol.ListadoDeSeleccion_Rol.resources
+D:\Facultad\3. Gestión de Datos\TP\TP ANTERIOR\FrbaHotel\obj\Debug\FrbaHotel.AbmRol.Rol_Alta.resources
+D:\Facultad\3. Gestión de Datos\TP\TP ANTERIOR\FrbaHotel\obj\Debug\FrbaHotel.AbmRol.Rol_Baja.resources
+D:\Facultad\3. Gestión de Datos\TP\TP ANTERIOR\FrbaHotel\obj\Debug\FrbaHotel.AbmRol.Rol_Modificacion.resources
+D:\Facultad\3. Gestión de Datos\TP\TP ANTERIOR\FrbaHotel\obj\Debug\FrbaHotel.AbmUsuario.ListadoDeSeleccion_Usuario.resources
+D:\Facultad\3. Gestión de Datos\TP\TP ANTERIOR\FrbaHotel\obj\Debug\FrbaHotel.AbmUsuario.Usuario_Alta.resources
+D:\Facultad\3. Gestión de Datos\TP\TP ANTERIOR\FrbaHotel\obj\Debug\FrbaHotel.AbmUsuario.Usuario_Baja.resources
+D:\Facultad\3. Gestión de Datos\TP\TP ANTERIOR\FrbaHotel\obj\Debug\FrbaHotel.AbmUsuario.Usuario_Modificacion.resources
+D:\Facultad\3. Gestión de Datos\TP\TP ANTERIOR\FrbaHotel\obj\Debug\FrbaHotel.CancelarReserva.frm_ABMCancelarReserva.resources
+D:\Facultad\3. Gestión de Datos\TP\TP ANTERIOR\FrbaHotel\obj\Debug\FrbaHotel.DarBajaReserva.Reserva_Baja.resources
+D:\Facultad\3. Gestión de Datos\TP\TP ANTERIOR\FrbaHotel\obj\Debug\FrbaHotel.FacturarEstadia.FacturarEstadia.resources
+D:\Facultad\3. Gestión de Datos\TP\TP ANTERIOR\FrbaHotel\obj\Debug\FrbaHotel.GenerarModificacionReserva.GenerarReserva.resources
+D:\Facultad\3. Gestión de Datos\TP\TP ANTERIOR\FrbaHotel\obj\Debug\FrbaHotel.GenerarModificacionReserva.ModificarReserva.resources
+D:\Facultad\3. Gestión de Datos\TP\TP ANTERIOR\FrbaHotel\obj\Debug\FrbaHotel.frm_Inicio.resources
+D:\Facultad\3. Gestión de Datos\TP\TP ANTERIOR\FrbaHotel\obj\Debug\FrbaHotel.GenerarModificacionReserva.frm_ABMGenerarModificacionReserva.resources
+D:\Facultad\3. Gestión de Datos\TP\TP ANTERIOR\FrbaHotel\obj\Debug\FrbaHotel.ListadoEstadistico.ListadoEstadistico.resources
+D:\Facultad\3. Gestión de Datos\TP\TP ANTERIOR\FrbaHotel\obj\Debug\FrbaHotel.Login.Login.resources
+D:\Facultad\3. Gestión de Datos\TP\TP ANTERIOR\FrbaHotel\obj\Debug\FrbaHotel.Properties.Resources.resources
+D:\Facultad\3. Gestión de Datos\TP\TP ANTERIOR\FrbaHotel\obj\Debug\FrbaHotel.RegistrarConsumible.RegistrarConsumible.resources
+D:\Facultad\3. Gestión de Datos\TP\TP ANTERIOR\FrbaHotel\obj\Debug\FrbaHotel.RegistrarEstadia.RegistrarEstadia.resources
+D:\Facultad\3. Gestión de Datos\TP\TP ANTERIOR\FrbaHotel\obj\Debug\FrbaHotel.frm_SeleccionarRolFuncionalidadHotel.resources
+D:\Facultad\3. Gestión de Datos\TP\TP ANTERIOR\FrbaHotel\obj\Debug\FrbaHotel.csproj.GenerateResource.Cache

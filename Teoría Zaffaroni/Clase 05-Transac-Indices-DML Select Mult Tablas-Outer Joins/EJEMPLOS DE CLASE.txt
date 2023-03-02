@@ -1,0 +1,235 @@
+CREATE TABLE pruebaIndices (
+clave INT PRIMARY KEY,
+descripcion VARCHAR(50),
+claveAlterna1 INT,
+claveAlterna2 CHAR(10),
+UNIQUE (claveAlterna1,claveAlterna2))
+
+
+
+INSERT INTO pruebaIndices VALUES (1,'DESCR 1',11,'INT 11')
+
+--ERROR
+INSERT INTO pruebaIndices VALUES (1,'DESCR 1',11,'INT 11')
+
+-- OK
+INSERT INTO pruebaIndices VALUES (2,'DESCR 1',12,'INT 11')
+
+
+SELECT * FROM pruebaIndices
+
+--INDICE SIMPLE DUPLICADO
+CREATE INDEX ixNuevo ON pruebaIndices (descripcion)
+
+
+--INDICE SIMPLE UNICO -- ERROR DE DATOS DUPLICADOS
+CREATE UNIQUE INDEX ixNuevo ON pruebaIndices (descripcion)
+
+
+CREATE TABLE pruebaIndicesFK (
+clave INT PRIMARY KEY,
+claveFK INT REFERENCES pruebaIndices)
+
+--
+CREATE INDEX ix_fkdupl ON pruebaIndicesFK (claveFK)
+
+
+
+INSERT INTO pruebaIndicesFK VALUES (1000,1)
+
+INSERT INTO pruebaIndicesFK VALUES (1001,1)
+
+-- ERROR POR PK
+INSERT INTO pruebaIndicesFK VALUES (1001,3)
+
+
+--ok
+SELECT customer.customer_num, company, phone,
+order_num, order_date, backlog
+FROM customer, orders
+WHERE customer.customer_num = orders.customer_num
+ORDER BY customer_num
+
+SELECT customer.customer_num, company, phone,
+order_num, order_date, backlog
+FROM customer JOIN orders ON (customer.customer_num = orders.customer_num)
+ORDER BY customer_num
+
+
+--producto cartesiano
+
+
+SELECT customer_num, state, sname
+FROM customer, state
+
+select count(*) from state
+
+select count(*) from customer
+
+
+SELECT *
+FROM customer, state
+
+
+
+
+
+
+
+
+--error columna ambigua
+SELECT customer_num, company, phone,
+order_num, order_date, backlog,sname
+FROM customer, orders, state
+WHERE customer.customer_num = orders.customer_num
+AND state=code
+ORDER BY customer_num
+
+
+-- join de tres tablas Y ALIAS
+SELECT C.customer_num, company, phone,order_num, order_date, backlog,sname
+FROM customer C, orders O, state S
+WHERE c.customer_num = O.customer_num
+AND state=code
+ORDER BY customer_num
+
+
+
+-- join compuesto
+
+SELECT item_num, order_num, i.stock_num, i.manu_code, description, quantity
+FROM items i JOIN stock s ON (i.stock_num=s.stock_num AND i.manu_code = s.manu_code)
+
+
+
+
+-- join natural
+SELECT *  -- no es natural porque repite el manu_code dos veces
+FROM stock, manufact
+WHERE stock.manu_code = manufact.manu_code
+
+SELECT stock.*, manu_name, lead_time
+FROM stock, manufact
+WHERE stock.manu_code = manufact.manu_code
+
+
+-- JOIN DE 4 TABLAS
+SELECT customer.company, orders.order_num, item_num, sname
+FROM customer, orders, items,state
+WHERE customer.customer_num = orders.customer_num AND
+orders.order_num = items.order_num AND
+customer.customer_num = 104 AND
+customer.state = state.code
+
+-- ANSI
+SELECT customer.company, orders.order_num, item_num, sname
+FROM customer JOIN orders ON customer.customer_num = orders.customer_num
+              JOIN items  ON orders.order_num = items.order_num
+              JOIN state  ON customer.state = state.code 
+WHERE  customer.customer_num = 104
+
+
+-- ANSI ERROR POR MEZCLAR...
+SELECT customer.company, orders.order_num, item_num, sname
+FROM customer JOIN orders ON customer.customer_num = orders.customer_num
+              JOIN items  ON orders.order_num = items.order_num
+              JOIN state  --FALTA EL ON
+WHERE  customer.customer_num = 104
+AND customer.state = state.code 
+
+
+ALIAS DE TABLAS
+
+SELECT c.customer_num, o.order_num, i.item_num
+FROM customer c, orders o, items i
+WHERE c.customer_num = o.customer_num AND
+o.order_num = i.order_num AND
+c.customer_num = 104
+
+
+
+NATURAL JOIN  --VER QUE ONDA???????
+
+SELECT * FROM CUSTOMER JOIN ORDERS
+
+
+
+--
+
+SELECT DISTINCT CUSTOMER_NUM FROM ORDERS WHERE CUSTOMER_NUM < 115
+
+
+SELECT C.CUSTOMER_NUM,lname, order_num
+from CUSTOMER C, ORDERS O
+WHERE c.customer_num = o.customer_num
+AND c.customer_num <115
+
+--todos los clientes que nos comprar
+
+SELECT DISTINCT C.CUSTOMER_NUM,lname,COUNT(ORDER_NUM)
+from CUSTOMER C, ORDERS O
+WHERE c.customer_num = o.customer_num
+AND c.customer_num <115
+GROUP BY c.customer_num,lname
+
+
+SELECT DISTINCT C.CUSTOMER_NUM,lname,COUNT(ORDER_NUM)
+from CUSTOMER C INNER JOIN ORDERS O ON c.customer_num = o.customer_num
+WHERE c.customer_num <115
+GROUP BY c.customer_num,lname
+
+
+SELECT DISTINCT C.CUSTOMER_NUM,lname,COUNT(ORDER_NUM)
+from CUSTOMER C LEFT JOIN ORDERS O ON c.customer_num = o.customer_num
+WHERE c.customer_num <115
+GROUP BY c.customer_num,lname
+
+
+SELECT DISTINCT C.CUSTOMER_NUM,lname,COUNT(ORDER_NUM)
+from  ORDERS O RIGHT JOIN CUSTOMER C ON c.customer_num = o.customer_num
+WHERE c.customer_num <115
+GROUP BY c.customer_num,lname
+
+
+SELECT DISTINCT C.CUSTOMER_NUM,lname,COUNT(ORDER_NUM)
+from  ORDERS O  JOIN CUSTOMER C ON c.customer_num = o.customer_num
+WHERE c.customer_num <115
+GROUP BY c.customer_num,lname
+
+
+
+INSERT INTO ORDERS (ORDER_NUM, CUSTOMER_NUM)VALUES (19999,NULL)
+
+
+
+DROP TABLE A
+CREATE TABLE A (campoa int primary key, detalle CHAR(10))
+alter table a add campob int references B
+
+CREATE TABLE b (campob int primary key, 
+campoa int references A,
+detalle CHAR(10))
+
+
+insert into a values (1,null,null)
+insert into b values (1,null,null)
+insert into a values (2,null,1)
+insert into a values (3,null,1)
+insert into b values (2,1,null)
+
+select * from a
+
+select * from b
+
+select a.campoa, b.campob
+from a JOIN b ON a.campob=b.campob
+
+select a.campoa, b.campob
+from a LEFT JOIN b ON a.campob=b.campob
+
+select a.campoa, b.campob
+from a RIGHT JOIN b ON a.campob=b.campob
+
+
+select a.campoa, b.campob
+from a FULL JOIN b ON a.campob=b.campob

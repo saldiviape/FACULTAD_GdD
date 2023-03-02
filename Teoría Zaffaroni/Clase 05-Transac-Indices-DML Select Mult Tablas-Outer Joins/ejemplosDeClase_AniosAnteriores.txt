@@ -1,0 +1,92 @@
+SELECT customer_num, company, state, sname
+FROM customer,state
+WHERE state=code
+
+SELECT I.*,manu_name,description FROM items I 
+                     JOIN manufact M  ON (I.manu_code = M.manu_code)
+                     JOIN stock S     ON (I.stock_num = S.stock_num AND
+                                          I.manu_code = S.manu_code)
+WHERE   order_num >1005
+AND   total_price BETWEEN 200 AND 700
+AND   manu_name LIKE 'H%'          
+
+SELECT I.*,manu_name,description FROM items I, manufact M, stock S  
+WHERE I.manu_code = M.manu_code
+AND   I.stock_num = S.stock_num
+AND   I.manu_code = S.manu_code
+AND   order_num >1005
+AND   total_price BETWEEN 200 AND 700
+AND   manu_name LIKE 'H%'
+
+
+
+SELECT customer_num, company, state, code, sname, i.stock_num
+FROM customer  JOIN state ON (state=code)
+
+
+SELECT O.order_num, item_num, order_date, ship_date, description, total_price, i.stock_num
+FROM orders O, items I, stock S
+WHERE O.order_num = I.order_num
+AND   I.stock_num = S.stock_num
+AND   I.manu_code = S.manu_code
+AND   I.stock_num = 201
+ORDER BY O.order_num, item_num
+
+
+
+SELECT O.order_num, item_num, order_date, ship_date, description, total_price
+FROM orders O 
+     JOIN items I ON (O.order_num = I.order_num)
+     JOIN stock S ON (I.stock_num = S.stock_num
+                      AND   I.manu_code = S.manu_code)
+WHERE I.stock_num=201
+ORDER BY O.order_num, item_num
+
+EJEMPLOS DE OUTER JOIN
+
+
+select customer_num, fname,lname, sname
+from customer c, state s WHERE state = code
+
+select customer_num, fname,lname, sname
+from customer c JOIN state s ON ( state = code )
+
+
+select count(*) from customer
+
+select customer_num, fname,lname, sname
+from customer c LEFT JOIN state s ON ( state = code )
+
+select customer_num, fname,lname, sname
+from  state s left JOIN customer c ON ( state = code )
+
+OUTER JOIN
+Queremos recuperar todos los estados con su cantidad de clientes, 
+si no tiene clientes que muestre el estado y cantidad 0.
+
+select state, count(*) from customer group by state order by state 
+-- No tira los estados con 0 cliente  NO DEVUELVE LO PEDIDO
+
+select state, count(*) from customer c, state s WHERE state = code
+group by state
+order by state
+-- No tira los estados con 0 cliente  NO DEVUELVE LO PEDIDO
+
+
+
+select code, count(customer_num) 
+from state LEFT JOIN customer ON (code = state) 
+group by code
+order by code 
+-- Devuelve LO PEDIDO  Estados con 0 clientes, y estados con la cantidad de clientes
+
+
+Otro caso RIGHT JOIN
+Devuelve la cantidad de clientes que no tienen estado y los estados con la cant. de clientes <> 0
+select code, count(customer_num) 
+from state RIGHT JOIN customer ON (code = state) 
+group by code
+order by code 
+
+
+

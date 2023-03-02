@@ -1,0 +1,23 @@
+MANEJO DE TRANSACCIONES (dentro de un trigger) AL TRABAJAR CON UN LOTE COMPLETO DE INSERTs
+(Se requerirá el manejo de transacciones (BEGIN, COMMIT, ROLLBACK) usando los bloques (TRY-CATCH))
+
+Supongamos por ejemplo que tengo que insertar 100 filas en una tabla... Pero dentro de esos 100 INSERTS, hay 1 que es incorrecto.
+
+Hay dos posibilidades:
+
+1.	INSERTAR EL LOTE COMPLETO (puede no insertarse nada en caso de haber un error en un INSERT):
+	- Todas las filas serán insertadas si no hay ningún fallo en ningún INSERT:
+		- si un INSERT falla, falla la inserción de todo el lote. Es decir, no se inserta ninguna fila (por más que los demás INSERTs sean correctos).
+	- En este caso, la transacción se manejaría por lote (se trata de una transacción atómica):
+			- No son necesarios BEGIN TRANSACTION ni COMMIT TRANSACTION.
+			- Debe ir ROLLBACK TRANSACTION al inicio del bloque CATCH.	
+	
+2.	INSERTAR FILA POR FILA, DONDE UN INSERT ES INDEPENDIENTE DEL OTRO:
+	- Cada fila es independiente de la otra:
+		- si un INSERT es correcto, la fila se insertará.
+		- si un INSERT es incorrecto, la fila no se insertará.
+	- En este caso, la transacción se maneja fila por fila:
+			- Debe ir BEGIN TRANSACTION al inicio del bloque TRY.
+			- Debe ir COMMIT TRANSACTION al final del bloque TRY.
+			- Debe ir ROLLBACK TRANSACTION al inicio del bloque CATCH.
+			

@@ -1,0 +1,20 @@
+using System.Security.Cryptography; //Necesario para el hash256
+
+/* Tres objetos:
+	- textBox1
+	- textBox2
+	- button1
+ */
+
+private void button1_Click(object sender, EventArgs e)
+        {
+            //HASH SHA_256 - EMPIEZA
+            SHA256CryptoServiceProvider provider = new SHA256CryptoServiceProvider();
+            byte[] inputBytes = Encoding.UTF8.GetBytes(textBox1.Text);
+            byte[] hashedBytes = provider.ComputeHash(inputBytes);
+            StringBuilder output = new StringBuilder();
+            for (int i = 0; i < hashedBytes.Length; i++) output.Append(hashedBytes[i].ToString("x2").ToUpper());
+            textBox2.Text = output.ToString();                  //Valor hexa
+            string aux_pwdHashed = "Ox" + output.ToString();    //"Ox" concatenado con el valor hexa
+            //TERMINA
+        }

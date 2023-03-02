@@ -1,0 +1,627 @@
+
+-----------------------------------------------------------------------------------------------
+Ejemplo 1 Trigger de AFTER columnas derivadas
+
+CREATE TRIGGER upd_items_ordenes 
+ON items_ordenes
+AFTER UPDATE 
+AS
+BEGIN 
+  DECLARE @q_cant_del int, @i_prec_del  dec(8,2), @n_orden int,
+                  @q_cant_ins int, @i_prec_ins  dec(8,2);
+
+  SELECT @q_cant_del =q_cantidad, @i_prec_del=i_precunit 
+  FROM deleted;
+
+  SELECT @n_orden= n_orden, @q_cant_ins =q_cantidad, @i_prec_ins=i_precunit 
+  FROM inserted;
+
+  IF UPDATE (q_cantidad) OR UPDATE (i_precio)
+  BEGIN
+	UPDATE ordenes  
+           SET i_total= i_total
+                       -(@q_cant_del*@i_prec_del)
+                       +(@q_cant_ins * @i_prec_ins)
+ 	WHERE n_orden = @n_orden;
+  END
+END
+GO
+--
+
+ALTER TABLE orders ADD total  decimal(12,2)
+
+UPDATE orders SET total= 
+(SELECT SUM(total_price) FROM items i
+ WHERE i.order_num= orders.order_num)
+
+select * from orders order by 1
+select * from items order by 2
+
+CREATE TRIGGER upd_items_ordenes 
+ON items
+AFTER UPDATE 
+AS
+BEGIN 
+  DECLARE @i_prec_del  dec(8,2), @n_orden int, @i_prec_ins  dec(8,2);
+
+  SELECT @i_prec_del=total_price 
+  FROM deleted;
+
+  SELECT @n_orden= order_num, @i_prec_ins=total_price 
+  FROM inserted;
+
+  IF UPDATE (total_price)
+  BEGIN
+	UPDATE orders
+           SET total= total
+                       -@i_prec_del
+                       +@i_prec_ins
+		WHERE order_num = @n_orden;
+  END
+END
+
+-- Mofifico el item 4 de la orden 1004
+
+UPDATE items SET total_price = 1800
+WHERE item_num=4 AND order_num = 1004
+
+-- Chequeo 
+
+select * from items  order by 2
+
+select order_num,total from orders  order by 1
+
+-- Vuelvo para atrás la modificación del item 4 de la orden 1004
+
+UPDATE items SET total_price = 800
+WHERE item_num=4 AND order_num = 1004
+
+
+
+-- datos para la prueba
+
+CREATE TABLE [dbo].[ordenes](
+	[n_orden] [int] NOT NULL,
+	[i_total] [numeric](10, 2) NULL,
+PRIMARY KEY CLUSTERED 
+(	[n_orden] ASC
+))
+
+CREATE TABLE [dbo].[items_ordenes](
+	[n_orden] [int] NOT NULL,
+	[n_item] [smallint] NOT NULL,
+	[q_cantidad] [int] NULL,
+	[i_precunit] [numeric](10, 2) NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[n_orden] ASC,
+	[n_item] ASC
+)
+)
+
+GO
+ALTER TABLE [dbo].[items_ordenes]  WITH CHECK ADD FOREIGN KEY([n_orden])
+REFERENCES [dbo].[ordenes] ([n_orden])
+insert into ordenes values (1,200)
+insert into items_ordenes values (1,1,10,10)
+insert into items_ordenes values (1,2,10,10)
+
+insert into ordenes values (2,400)
+insert into items_ordenes values (2,1,5,20)
+insert into items_ordenes values (2,2,10,10)
+
+SELECT * FROM ordenes
+
+UPDATE ITEMS_ORDENES SET Q_CANTIDAD =20 WHERE N_ORDEN=1 AND N_ITEM=1
+
+select * from items_ordenes
+select * from ordenes
+
+
+-----------------------------------------------------------------
+Ejemplo 2 - TRIGGER DE INSTEAD OF 1
+
+CREATE VIEW ordenes_por_cliente (cod_cliente, nombre, apellido, nro_orden, fecha_orden)
+AS
+SELECT c.customer_num, fname, lname, order_num, order_date
+FROM customer c JOIN orders o ON (c.customer_num = o.customer_num)
+
+
+CREATE TRIGGER InsertaClienteyOrdenEnVista
+ON ordenes_por_cliente
+INSTEAD OF INSERT
+AS
+BEGIN
+  
+   INSERT INTO customer (customer_num, fname, lname)
+   SELECT cod_cliente,nombre,apellido FROM inserted;
+   
+
+   INSERT INTO orders (order_num, order_date, customer_num)
+   SELECT nro_orden, fecha_orden, cod_cliente FROM inserted;
+GO
+------------------------------------------------------------
+Ejemplo 3 - TRIGGER DE basico de AUDITORIA
+
+CREATE TABLE [dbo].[state_upd](
+    id_auditoria INT IDENTITY(1,1),
+	[code] [char](2) NOT NULL,
+	[sname] [varchar](15) NULL,
+	accion  char,
+	fechaYHora datetime 
+) ON [PRIMARY]
+
+
+CREATE TRIGGER stateUpdateAudit
+ON state
+AFTER update
+AS
+BEGIN
+INSERT INTO state_upd
+SELECT code,sname,'A',getdate() from deleted;
+
+INSERT INTO state_upd
+SELECT code,sname,'N',getdate() from inserted;
+END
+
+update state SET sname='AZ...'
+WHERE code='AZ'
+
+SELECT * FROM STATE_UPD
+
+update state SET sname='Arizona'
+WHERE code='AZ'
+
+-- FORZAMOS UN ERROR PARA VER EL ROLLBACK
+DROP TRIGGER stateUpdateAudit
+CREATE TRIGGER stateUpdateAudit
+ON state
+AFTER update
+AS
+BEGIN
+INSERT INTO state_upd
+SELECT code,sname,'A',getdate() from deleted;
+
+INSERT INTO state_upd
+SELECT null,sname,'N',getdate() from inserted; -- INSERTO UN NULO EN LA TABLA STATE_UPD FORZANDO ERROR
+
+END
+
+
+
+------------------------------------------------------------
+Ejemplo 4 - TRIGGER DE basico de AUDITORIA
+
+
+TRIGGER DE ON DELETE CASCADE  -- INSTEAD OF
+
+DELETE FROM ordenes WHERE n_orden=3
+
+DROP TRIGGER borradoEnCascadaDeOrdenes
+
+CREATE TRIGGER borradoEnCascadaDeOrdenes
+ON ordenes
+INSTEAD OF DELETE
+AS
+BEGIN
+
+DELETE FROM items_ordenes 
+WHERE n_orden = (SELECT n_orden FROM deleted)
+DELETE FROM ordenes 
+WHERE n_orden = (SELECT n_orden FROM deleted)
+END
+
+SELECT * FROM ORDENES
+SELECT * FROM ITEMS_ORDENES
+
+DELETE FROM ordenes
+
+SELECT * FROM ORDENES
+SELECT * FROM ITEMS_ORDENES
+
+--------------------------------------
+CREATE TRIGGER borradoEnCascadaDeOrdenes
+ON orders
+INSTEAD OF DELETE
+AS
+BEGIN
+
+DELETE FROM items 
+WHERE order_num = (SELECT order_num FROM deleted)
+DELETE FROM orders 
+WHERE order_num = (SELECT order_num FROM deleted)
+END
+
+select * from items  order by 2
+
+select * from orders  order by 1
+
+DELETE FROM orders WHERE order_num=1003
+
+-- probamos borrado múltiple
+-- con el mismo trigger falla
+
+DELETE FROM orders WHERE order_num<1003
+
+-- Modificamos el trigger
+DROP TRIGGER borradoEnCascadaDeOrdenes
+CREATE TRIGGER borradoEnCascadaDeOrdenes
+ON orders
+INSTEAD OF DELETE
+AS
+BEGIN
+
+DELETE FROM items 
+WHERE order_num IN (SELECT order_num FROM deleted)
+DELETE FROM orders 
+WHERE order_num IN (SELECT order_num FROM deleted)
+END
+BEGIN TRANSACTION
+DELETE FROM orders 
+
+ROLLBACK TRANSACTION
+select * from items  order by 2
+
+select * from orders  order by 1
+
+--------------------------------------
+
+------------------------------------------------------------
+Otro Ejemplo de Trigger INSTEAD OF  sobre una TABLA
+
+Ante un update masivo en state, graba en la tabla state_oper 
+una fila con la fecha inicio y fecha fin.
+Por cada fila modificada graba dos registros con fila vieja 
+y nueva en state_upd. 
+CREATE TRIGGER AuditoriaTablaState ON state INSTEAD OF UPDATE AS
+BEGIN
+   DECLARE @ultIdentity bigint;
+   INSERT INTO state_oper values (getdate(),null);
+   select @ultIdentity = scope_identity();
+
+   DECLARE TrigUpdCursor CURSOR FOR
+   SELECT code, sname FROM inserted
+   DECLARE @code char(2), @sname varchar(15)
+
+  OPEN TrigUpdCursor;
+  FETCH NEXT FROM TrigUpdCursor INTO @code,@sname
+  WHILE @@FETCH_STATUS = 0
+  BEGIN
+      UPDATE state SET 
+        sname = @sname
+      WHERE code = @code;
+
+      insert into state_upd 
+             values ('N',@code,@sname,getdate());
+
+      insert into state_upd 
+             SELECT 'O',code,sname,getdate()
+             FROM deleted 
+             WHERE code = @code;
+      
+      FETCH NEXT FROM TrigUpdCursor INTO @code,@sname
+  END;
+  CLOSE TrigUpdCursor;
+  DEALLOCATE TrigUpdCursor;
+  UPDATE state_oper set oper_fin = GETDATE() 
+   where oper_id = @ultIdentity;
+END;
+
+
+----------
+Datos para probar el caso
+
+CREATE TABLE [dbo].[state_oper](
+	[stateOperID] [int] IDENTITY(1,1) NOT NULL,
+	[stateOperIni] [datetime] NULL,
+	[stateOperFin] [datetime] NULL)
+
+CREATE TABLE [dbo].[state_upd](
+	[code] [char](2),
+	[sname] [varchar](15),
+	[operacion] [char](1),
+	[fechaYHora] [datetime] NULL) ON [PRIMARY]
+
+UPDATE state set sname = sname+'3' WHERE code in ('Z0','Z1','Z2');
+
+SELECT * FROM STATE_UPD WHERE code IN ('Z0','Z1','Z2');
+
+SELECT * FROM state where code  IN ('Z0','Z1','Z2')
+SELECT * FROM state_upd order by fecha desc
+SELECT * FROM state_oper 
+
+
+------------------------------------------------------------------------------------
+Ante un insert o varios inserts en la tabla State, 
+valida el código de estado a insertar y si está repetido inserta 
+una fila en state_sts con operación 'I' 
+y estado "E" y observación "Clave Duplicada"
+Si el código no está repetido graba la fila en tabla state y una fila de control
+en la tabla state_sts con estado "OK" y observación en nulo.
+
+CREATE TABLE state_sts
+(stateStatusID INT IDENTITY(1,1) NOT NULL PRIMARY KEY,
+ operacion CHAR,
+ code CHAR(2),
+ sname VARCHAR(15),
+ fecha DATE,
+ estado CHAR(2) DEFAULT 'OK',
+ observacion VARCHAR(100)
+)
+
+
+CREATE TRIGGER pruCursorInstOf2
+ON state
+INSTEAD OF INSERT
+AS
+BEGIN
+  
+  DECLARE TrigInsCursor CURSOR FOR
+  SELECT code, sname FROM inserted
+
+  DECLARE @code char(2), @sname varchar(15)
+
+  OPEN TrigInsCursor;
+
+  FETCH NEXT FROM TrigUpdCursor INTO @code,@sname;
+
+  WHILE @@FETCH_STATUS = 0
+  BEGIN
+ 
+      IF NOT EXISTS( SELECT code FROM state WHERE code=@code )
+      BEGIN
+         insert into state VALUES ( @code,@sname);
+         insert into state_sts values ('I',@code,@sname,getdate(),'OK','');
+      ELSE
+         insert into state_sts VALUES ('E',@code,@sname,getdate(),'E','Clave Duplicada');
+
+      FETCH NEXT FROM TrigInsCursor INTO @code,@sname;
+
+  END;
+
+  CLOSE TrigInsCursor;
+  DEALLOCATE TrigInsCursor;
+END;
+GO
+
+
+[]
+
+SELECT * INTO #Tabtemp FROM state where code IN ('Z0','Z1','Z2')
+update #Tabtemp set code='X0' WHERE code='Z0'
+update #Tabtemp set code='X1' WHERE code='Z1'
+update #Tabtemp set code='X2' WHERE code='Z2'
+
+
+insert into state 
+select * from #Tabtemp
+
+-----------------------------------------------------------------------------------------------
+
+
+------------------ TRIGGER DE INSTEAD OF 2
+CREATE TRIGGER Tr_ordPorCli
+ON ordenes_por_cliente
+INSTEAD OF INSERT
+AS
+BEGIN
+  
+   INSERT INTO customer (customer_num, fname, lname)
+   SELECT cod_cliente,nombre,apellido FROM inserted;
+   
+   INSERT INTO orders (order_num, order_date, customer_num)
+   SELECT nro_orden, fecha_orden, cod_cliente FROM inserted;
+END
+
+INSERT INTO ordenes_por_cliente 
+VALUES (12345,'Maria','Vazquez',11111,'2014-10-10')
+
+select * from customer where customer_num=12345
+select * from orders where customer_num=12345
+
+
+
+------------------------------------------------------------
+Otro Ejemplo de Trigger INSTEAD OF  sobre una TABLA   ---- CURSORES ----
+
+CREATE TRIGGER test1
+ON state
+INSTEAD OF UPDATE
+AS
+BEGIN
+   DECLARE @ultIdentity bigint;
+   INSERT INTO state_oper values (getdate(),null);
+   select @ultIdentity = scope_identity();
+   
+   DECLARE TrigUpdCursor CURSOR FOR
+   SELECT * FROM inserted
+   DECLARE @code char(2), @sname varchar(15)
+
+  OPEN TrigUpdCursor;
+
+  FETCH NEXT FROM TrigUpdCursor INTO @code,@sname
+
+  WHILE @@FETCH_STATUS = 0
+  BEGIN
+     
+      UPDATE state SET 
+      --code  = @code,
+        sname = @sname
+      WHERE code = @code;
+
+      insert into state_upd 
+             values ('N',@code,@sname,getdate());
+
+      insert into state_upd 
+             SELECT 'O',code,sname,getdate()
+             FROM deleted 
+             WHERE code = @code;
+
+      FETCH NEXT FROM TrigUpdCursor INTO @code,@sname
+
+  END;
+
+  CLOSE TrigUpdCursor;
+  DEALLOCATE TrigUpdCursor;
+
+
+
+
+//////////////////////////////////////
+
+CREATE VIEW v_ordenes
+(orden, item, fecha, cliente, nroprod, fabric, cantidad, precio, total_orden)
+AS
+SELECT o.order_num,item_num,order_date,customer_num,stock_num,manu_code,
+quantity,total_price,quantity*total_price
+FROM orders o JOIN items i ON (o.order_num=i.order_num)
+
+SELECT * FROM v_ordenes
+
+CREATE TRIGGER insOrdenes
+ON v_ordenes
+INSTEAD OF INSERT
+AS
+BEGIN
+
+INSERT INTO orders (order_num,order_date,customer_num)
+SELECT orden,fecha,cliente FROM inserted;
+INSERT INTO items (order_num,item_num,stock_num,manu_code,quantity,total_price)
+SELECT orden, item, nroprod, fabric, cantidad, precio FROM inserted;
+END
+
+INSERT INTO v_ordenes
+(orden, item, fecha, cliente, nroprod, fabric, cantidad, precio)
+VALUES
+(32766,1,'2018-05-16',112,5,'ANZ',20,21)
+
+select * from items where order_num >20000
+  UPDATE state_oper set oper_fin = GETDATE() 
+   where oper_id = @ultIdentity;
+END;
+GO
+
+
+
+update state set sname = sname+'3' WHERE code in ('Z0','Z1','Z2');
+
+SELECT * FROM STATE_UPD WHERE code IN ('Z0','Z1','Z2');
+
+SELECT * FROM state where code  IN ('Z0','Z1','Z2')
+SELECT * FROM state_upd order by fecha desc
+SELECT * FROM state_oper 
+
+
+insert into state 
+select * from #Tabtemp
+
+
+------------------------------------------------------------------------------------
+OTRO TRIGGER CON CURSORES
+
+CREATE TABLE state_upd
+(id INT IDENTITY(1,1) NOT NULL PRIMARY KEY,
+ operacion CHAR,
+ code CHAR(2),
+ sname VARCHAR(15),
+ fecha DATE
+)
+
+
+CREATE TRIGGER test2
+ON state
+INSTEAD OF INSERT
+AS
+BEGIN
+  
+  DECLARE TrigUpdCursor CURSOR FOR
+  SELECT code, sname FROM inserted
+
+  DECLARE @code char(2), @sname varchar(15)
+
+  OPEN TrigUpdCursor;
+
+  FETCH NEXT FROM TrigUpdCursor INTO @code,@sname;
+
+  WHILE @@FETCH_STATUS = 0
+  BEGIN
+ 
+      IF NOT EXISTS( SELECT code FROM state WHERE code=@code )
+      BEGIN
+         insert into state VALUES ( @code,@sname);
+         insert into state_upd values ('I',@code,@sname,getdate());
+      ELSE
+         insert into state_upd VALUES ('E',@code,@sname,getdate());
+
+      FETCH NEXT FROM TrigUpdCursor INTO @code,@sname;
+
+  END;
+
+  CLOSE TrigUpdCursor;
+  DEALLOCATE TrigUpdCursor;
+END;
+GO
+
+
+SELECT * INTO #Tabtemp FROM state where code IN ('Z0','Z1','Z2')
+update #Tabtemp set code='X0' WHERE code='Z0'
+update #Tabtemp set code='X1' WHERE code='Z1'
+update #Tabtemp set code='X2' WHERE code='Z2'
+
+
+
+----------------------------------------------
+CREATE TABLE ordenes
+(orden INT PRIMARY KEY,
+ fecha DATE,
+ cliente SMALLINT,
+ i_total DECIMAL(10,2))
+
+ CREATE TABLE items_orden
+(orden INT REFERENCES ordenes,
+ item  SMALLINT,
+ producto CHAR(3),
+ cant SMALLINT,
+ precio DECIMAL(7,2),
+ PRIMARY KEY (orden,item))
+
+ CREATE TRIGGER upd_items_ordenes 
+ON items_orden
+AFTER UPDATE 
+AS
+BEGIN 
+  DECLARE @cant_del int, @prec_del  dec(8,2), @n_orden int,
+                  @cant_ins int, @prec_ins  dec(8,2);
+
+  SELECT @cant_del =cant, @prec_del=precio 
+  FROM deleted;
+
+  SELECT @n_orden= orden, @cant_ins =cant, @prec_ins=precio 
+  FROM inserted;
+
+  IF UPDATE (cant) OR UPDATE (precio)
+  BEGIN
+	UPDATE ordenes  
+           SET i_total= i_total
+                       -(@cant_del*@prec_del)
+                       +(@cant_ins * @prec_ins)
+ 	WHERE orden = @n_orden;
+  END
+END
+
+insert into ordenes values (11,'2018-05-16',125,null)
+insert into ordenes values (12,'2018-05-16',126,null)
+insert into ordenes values (13,'2018-05-16',125,null)
+
+insert into items_orden values (11,1,'JEA',2,2000)
+insert into items_orden values (11,2,'CAM',4,1000)
+
+UPDATE ordenes SET i_total=8000 where orden=11
+
+update items_orden SET cant=1 WHERE orden=11 and item=1
+
+	select * from items_orden
+
+	select * from ordenes
+
+
